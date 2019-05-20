@@ -52,9 +52,9 @@ public abstract class AMessageHandler extends ChannelInboundHandlerAdapter {
     public boolean sendMes(String mes){
         ByteBuf b = Unpooled.buffer();
         b.writeBytes(CRC16Util.getSendBuf(mes));
-        ctx.writeAndFlush(b);
+        ctx.writeAndFlush(b).addListener(future -> {
+        });
         //存在内存溢出时启用，待观察
-        //ReferenceCountUtil.release(b);
         return true;
     }
 

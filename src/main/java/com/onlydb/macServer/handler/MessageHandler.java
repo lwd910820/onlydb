@@ -21,12 +21,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MessageHandler extends AMessageHandler {
 
     private JZXX jzxx = new JZXX();
 //    private String command = "";
 //    private boolean validAll = false;
+    private ConcurrentHashMap<String,String> jztz = new ConcurrentHashMap<>();
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {

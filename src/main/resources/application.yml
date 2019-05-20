@@ -5,7 +5,7 @@ spring:
     name: test
     username: grgltest
     password: Grgltest_1234
-    url: jdbc:oracle:thin:@192.168.1.105:1521/oracle
+    url: jdbc:oracle:thin:@192.168.1.105:1521/orcl
     driver-class-name: oracle.jdbc.OracleDriver
     dbcp2:
       initial-size: 20

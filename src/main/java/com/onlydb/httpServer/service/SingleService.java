@@ -10,6 +10,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.util.ReferenceCountUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
@@ -45,7 +46,6 @@ public class SingleService extends HttpService {
                 }
                 String ip = address.get("JZIP")+":"+address.get("JZPORT");
                 MessageHandler channel = SocketPool.getValidChannel(ip);
-                ByteBuf buf = Unpooled.buffer();
                 if(TransUtil.state.get(ip)==null){
                     send(ctx,"机器未连接",HttpResponseStatus.OK);
                     return;
@@ -54,6 +54,7 @@ public class SingleService extends HttpService {
                     send(ctx,"当前机器正在被操作，请稍后",HttpResponseStatus.OK);
                     return;
                 }
+                ByteBuf buf = Unpooled.buffer();
                 operation(ip,jqbh,jqzl,zdyzl,jqcs,buf,channel.getCtx());
                 return;
             }
@@ -87,12 +88,19 @@ public class SingleService extends HttpService {
 
     private void operation(String ip,String jqbh,String jqzl,String zdyzl,String jqcs,ByteBuf buf,ChannelHandlerContext channel){
         String zl = getZlj(jqbh,jqzl,jqcs,zdyzl);
-        if(zl==null) return;
+        if(zl==null) {
+            if(buf.refCnt()>0) ReferenceCountUtil.release(buf);
+            return;
+        }
         TransUtil.state.put(ip,1);
         System.out.println(zl);
         TransUtil.zls.put(ip,zl);
         buf.writeBytes(CRC16Util.getSendBuf(zl));
-        channel.writeAndFlush(buf);
+        channel.writeAndFlush(buf).addListener(future -> {
+            if(future.isSuccess()){
+                System.out.println(buf.refCnt());
+            }
+        });
         int i = 0;
         while (!TransUtil.state.get(ip).equals(0)&&i<5){
             try {

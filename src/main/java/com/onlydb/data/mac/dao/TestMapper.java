@@ -18,18 +18,18 @@ public interface TestMapper {
 //    public List<SYS_USER_ROLE> getRole();
 
     @Select("select VALUE from T_ZD_PROPERTIES where name='rk' and del_flag='0'")
-    public List<String> getRK();
+    List<String> getRK();
 
     @Select("select jzip,jzport from T_ZD_JZXX a,T_HC_JZXX b " +
             "where a.id = b.jzid and a.jzid=#{jzbh} and a.del_flag='0' and b.ljzt='0'")
-    public Map<String,String> getJzAddr(@Param("jzbh") String jzbh);
+    Map<String,String> getJzAddr(@Param("jzbh") String jzbh);
 
     @Select("select VALUE from T_ZD_PROPERTIES where del_flag='0' " +
             "and name = 'vk' ")
-    public String getValidKey();
+    String getValidKey();
 
     @Select("select t.id from T_ZD_JZXX t where t.jzid=#{jzbh} and del_flag='0'")
-    public String getJzUUID(@Param("jzbh") String jzbh);
+    String getJzUUID(@Param("jzbh") String jzbh);
 
     @Insert("insert into t_grgl_jzsj(jzuuid,ip,port,jzljzt) " +
             "values " +
@@ -37,7 +37,7 @@ public interface TestMapper {
             "#{jzxx.jzip,jdbcType=VARCHAR}," +
             "#{jzxx.jzport,jdbcType=VARCHAR}," +
             "#{jzzt})")
-    public Integer insertJzxx(@Param("jzxx")JZXX jzxx,@Param("jzzt") String jzzt);
+    Integer insertJzxx(@Param("jzxx")JZXX jzxx,@Param("jzzt") String jzzt);
 
     @Update("update T_HC_JZXX set " +
             "jzip=#{jzxx.jzip,jdbcType=VARCHAR}," +
@@ -45,10 +45,10 @@ public interface TestMapper {
             "dlsj=#{date,jdbcType=TIMESTAMP}," +
             "ljzt=#{zt} " +
             "where jzid=#{jzxx.id}")
-    public Integer updateJzxx(@Param("jzxx")JZXX jzxx, @Param("date")Date date,@Param("zt")String zt);
+    Integer updateJzxx(@Param("jzxx")JZXX jzxx, @Param("date")Date date,@Param("zt")String zt);
 
     @Select("select id from T_ZD_JQXX t where jzxxuuid=#{jzuuid} and jqid=#{jqbh} and del_flag='0'")
-    public String getJqUUID(@Param("jzuuid") String jzuuid, @Param("jqbh") String jqbh);
+    String getJqUUID(@Param("jzuuid") String jzuuid, @Param("jqbh") String jqbh);
 
     //水泵状态字段暂时删除，用环境温度替代
     @Update("update T_GRGL_JQSJ set " +
@@ -62,7 +62,7 @@ public interface TestMapper {
             "jqljzt=#{jqsj.jqljzt,jdbcType=CHAR}," +
             "update_date=#{date,jdbcType=TIMESTAMP} " +
             "where jquuid=#{jqsj.jqid,jdbcType=VARCHAR}")
-    public Integer updateJqsj(@Param("jqsj")NormalSJ jqsj,@Param("date")Date date);
+    Integer updateJqsj(@Param("jqsj")NormalSJ jqsj,@Param("date")Date date);
 
     //水泵状态字段暂时删除，用环境温度替代
     @Insert("insert into T_GRGL_JQSJ_HIS(jquuid,jzuuid,kzbz,model,gzdm,hswd,cswd,sdwd,jqlx) " +
@@ -76,14 +76,14 @@ public interface TestMapper {
             "#{jqsj.cswd,jdbcType=TINYINT}," +
             "#{jqsj.sdwd,jdbcType=TINYINT}," +
             "#{jqsj.jqlx,jdbcType=TINYINT})" )
-    public Integer inserJqsj(@Param("jqsj")NormalSJ jqsj,@Param("jzxx")JZXX jzxx);
+    Integer inserJqsj(@Param("jqsj")NormalSJ jqsj,@Param("jzxx")JZXX jzxx);
 
     @Insert("insert into T_GRGL_ALLJQSJ(qbcs,jzuuid,jquuid) " +
             "values (" +
             "#{alljqsj,jdbcType=VARCHAR}," +
             "#{jzxx.id,jdbcType=VARCHAR}," +
             "#{jqsj.jqid,jdbcType=VARCHAR})")
-    public Integer insertAllJqsj(@Param("alljqsj")String alljqsj,@Param("jzxx")JZXX jzxx,@Param("jqsj")NormalSJ jqsj);
+    Integer insertAllJqsj(@Param("alljqsj")String alljqsj,@Param("jzxx")JZXX jzxx,@Param("jqsj")NormalSJ jqsj);
 
 //    @Update("update T_HC_JZXX set " +
 //            "jzip=#{jzxx.jzip,jdbcType=VARCHAR}," +
@@ -96,14 +96,14 @@ public interface TestMapper {
     @Select("select count(*) from T_HC_JZXX t " +
             "where jzip=#{jzxx.jzip,jdbcType=VARCHAR} " +
             "and jzport=#{jzxx.jzport,jdbcType=VARCHAR}")
-    public Integer validIp(@Param("jzxx")JZXX jzxx);
+    Integer validIp(@Param("jzxx")JZXX jzxx);
 
     @Update("update t_grgl_jqsj a set a.jqljzt=#{zt} " +
             "where a.jquuid in(" +
             "select b.id from t_zd_jzxx a,t_zd_jqxx b " +
             "where a.id(+)=b.jzxxuuid " +
             "and a.id=#{jzxx.id,jdbcType=VARCHAR})")
-    public Integer unconnectedJq(@Param("jzxx")JZXX jzxx,@Param("zt")String zt);
+    Integer unconnectedJq(@Param("jzxx")JZXX jzxx,@Param("zt")String zt);
 
 //    @Update("<script>" +
 //            "update t_grgl_jqsj a set a.jqljzt=#{zt} " +
@@ -122,14 +122,14 @@ public interface TestMapper {
             "<foreach item='jzbh' index='index' collection='list' open='(' separator=',' close=')'> #{jzbh} </foreach>" +
             " and ljzt='0' and b.del_flag='0'" +
             "</script>")
-    public List<Map<String,Object>> getAddresses(@Param("list")List<String> jzbhs);
+    List<Map<String,Object>> getAddresses(@Param("list")List<String> jzbhs);
 
     @Update("update T_HC_JZXX set " +
             "sbzt=#{jzxx.sbzt,jdbcType=VARCHAR}," +
             "dbds=#{jzxx.dbds,jdbcType=FLOAT} " +
             "where " +
             "jzid = #{jzxx.id,jdbcType=VARCHAR}")
-    public Integer updateSBZT(@Param("jzxx")JZXX jzxx);
+    Integer updateSBZT(@Param("jzxx")JZXX jzxx);
 
     @Insert("insert into t_grgl_jzsj(jzuuid,ip,port,dbds,sbzt,jzljzt) " +
             "values " +
@@ -139,18 +139,20 @@ public interface TestMapper {
             "#{jzxx.dbds,jdbcType=FLOAT}," +
             "#{jzxx.sbzt,jdbcType=VARCHAR}," +
             "#{jzzt})")
-    public Integer insertSBZT(@Param("jzxx")JZXX jzxx,@Param("jzzt")String jzzt);
+    Integer insertSBZT(@Param("jzxx")JZXX jzxx,@Param("jzzt")String jzzt);
 
     @Update("update T_HC_JZXX a set a.ljzt='1'")
-    public Integer initJZZT();
+    Integer initJZZT();
 
     @Update("update t_grgl_jqsj a set a.jqljzt='1'")
-    public Integer initJQZT();
+    Integer initJQZT();
 
     @Update("update T_GRGL_JQSJ t set " +
             "t.lastml=#{jqzl,jdbcType=VARCHAR}," +
             "t.last_date=#{date,jdbcType=TIMESTAMP} " +
             "where " +
             "t.jquuid=#{jquuid,jdbcType=VARCHAR}")
-    public Integer updateJQCZ(@Param("jqzl")String jqzl,@Param("jquuid")String jquuid,@Param("date")Date date);
+    Integer updateJQCZ(@Param("jqzl")String jqzl,@Param("jquuid")String jquuid,@Param("date")Date date);
+
+//    @Select("")
 }
