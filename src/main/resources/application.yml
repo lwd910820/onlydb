@@ -1,10 +1,11 @@
+
 #datasource
 spring:
   datasource:
     name: test
     username: grgltest
-    password: grgltest
-    url: jdbc:oracle:thin:@223.255.10.236:10010/orcl
+    password: Grgltest_1234
+    url: jdbc:oracle:thin:@192.168.1.105:1521/orcl
     driver-class-name: oracle.jdbc.OracleDriver
     dbcp2:
       initial-size: 20
