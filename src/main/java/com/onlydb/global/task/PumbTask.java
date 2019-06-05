@@ -21,8 +21,12 @@ public class PumbTask implements Runnable {
                     continue;
                 }
                 if(TransUtil.state.get(mh.getAddress()).equals(0)){
-                    TransUtil.state.put(mh.getAddress(),4);
-                    mh.sendMes("ff0300940001");
+                    synchronized (TransUtil.state) {
+                        if(TransUtil.state.get(mh.getAddress()).equals(0)){
+                            TransUtil.state.put(mh.getAddress(),4);
+                            mh.sendMes(mh.getJztz().getPumpcom());
+                        }
+                    }
                 }
             }
             Thread.sleep(10000);

@@ -1,6 +1,9 @@
 package com.onlydb.macServer.handler;
 
 import com.onlydb.data.mac.dao.TestMapper;
+import com.onlydb.data.mac.entity.JQLX;
+import com.onlydb.data.mac.entity.JZTZ;
+import com.onlydb.data.mac.entity.JZXX;
 import com.onlydb.util.CRC16Util;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -11,10 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AMessageHandler extends ChannelInboundHandlerAdapter {
 
@@ -28,7 +29,10 @@ public abstract class AMessageHandler extends ChannelInboundHandlerAdapter {
     protected String port;
     protected String address;
     protected ChannelHandlerContext ctx;
-    protected List<String> jqs = new ArrayList<>();
+//    protected List<String> jqs = new ArrayList<>();
+    protected Map<String,JQLX> jqlxs = new ConcurrentHashMap<>();
+    protected JZTZ jztz;
+    protected JZXX jzxx = new JZXX();
 
     protected byte[] msgToByte(Object msg) {
         ByteBuf b = (ByteBuf) msg;
@@ -64,4 +68,20 @@ public abstract class AMessageHandler extends ChannelInboundHandlerAdapter {
 
 
     public String getAddress() { return address; }
+
+    public JZTZ getJztz() {
+        return jztz;
+    }
+
+    public void setJztz(JZTZ jztz) {
+        this.jztz = jztz;
+    }
+
+    public JZXX getJzxx() {
+        return jzxx;
+    }
+
+    public void setJzxx(JZXX jzxx) {
+        this.jzxx = jzxx;
+    }
 }

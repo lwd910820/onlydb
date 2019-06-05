@@ -59,8 +59,8 @@ public class OnlydbApplication implements CommandLineRunner{
 		};
 		threadpool.execute(httpT);
 		threadpool.execute(socketT);
-		sespool.scheduleAtFixedRate(new NormalTask(),1,10, TimeUnit.MINUTES);
-		sespool.scheduleAtFixedRate(new ElectryTask(),3,10,TimeUnit.MINUTES);
-//		sespool.scheduleAtFixedRate(new PumbTask(),5,10,TimeUnit.MINUTES);
+		sespool.scheduleAtFixedRate(new NormalTask(),0,12, TimeUnit.MINUTES);
+		sespool.scheduleAtFixedRate(new ElectryTask(),1,12,TimeUnit.MINUTES);
+		sespool.scheduleAtFixedRate(new PumbTask(),2,12,TimeUnit.MINUTES);
 	}
 }

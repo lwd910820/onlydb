@@ -1,6 +1,7 @@
 package com.onlydb.data.mac.entity;
 
-import java.util.Map;
+import com.onlydb.util.SJGZUtil;
+
 
 public class NormalSJ {
 
@@ -8,28 +9,45 @@ public class NormalSJ {
     private String kzbz;
     private String msxz;
     private String gzdm;
-    private Float hswd;
-    private Float cswd;
-    private Float sdwd;
-    private Float hjwd;
+    private Double hswd;
+    private Double cswd;
+    private Double sdwd;
+    private Double hjwd;
     private String jqlx;
     private String jqljzt = "0";
-    private Integer sjlength = 4;
 
     public NormalSJ(){}
 
-    public NormalSJ(String s,String jqid){
+    public NormalSJ(String s,String jqid,JZTZ jztz){
         this.jqid = jqid;
-        if(s.length()==18){
-            setKzbz(s.substring(2,2));
-            setMsxz(s.substring(4,6));
-            setGzdm(s.substring(6,8));
-            setHswd((float) (Integer.valueOf(s.substring(8,10),16)/10));
-            setCswd((float) (Integer.valueOf(s.substring(10,12),16)/10));
-            setSdwd((float) (Integer.valueOf(s.substring(12,14),16)/10));
-            setHjwd((float) (Integer.valueOf(s.substring(14,16),16)/10));
-            setJqlx(s.substring(16,18));
+        if(s.length()==jztz.getSinlen()*8){
+            setKzbz((String) SJGZUtil.transMsg(s.substring(jztz.getKzbz(),jztz.getKzbz()+jztz.getSinlen()),jztz.getKzbzgz()));
+            setMsxz((String) SJGZUtil.transMsg(s.substring(jztz.getMsxz(),jztz.getMsxz()+jztz.getSinlen()),jztz.getMsxzgz()));
+            setGzdm((String) SJGZUtil.transMsg(s.substring(jztz.getGzdm(),jztz.getGzdm()+jztz.getSinlen()),jztz.getGzdmgz()));
+            setHswd((Double) SJGZUtil.transMsg(s.substring(jztz.getHswd(),jztz.getHswd()+jztz.getSinlen()),jztz.getHswdgz()));
+            setCswd((Double) SJGZUtil.transMsg(s.substring(jztz.getCswd(),jztz.getCswd()+jztz.getSinlen()),jztz.getCswdgz()));
+            setSdwd((Double) SJGZUtil.transMsg(s.substring(jztz.getSdwd(),jztz.getSdwd()+jztz.getSinlen()),jztz.getSdwdgz()));
+            setHjwd((Double) SJGZUtil.transMsg(s.substring(jztz.getHswd(),jztz.getHswd()+jztz.getSinlen()),jztz.getHswdgz()));
+            setJqlx((String) SJGZUtil.transMsg(s.substring(jztz.getJqlx(),jztz.getJqlx()+jztz.getSinlen()),jztz.getJqlxgz()));
         }
+    }
+
+    public NormalSJ(String jqid){
+        this.jqid = jqid;
+    }
+
+    public NormalSJ setProp(String s,JZTZ jztz){
+        if(s.length()==jztz.getSinsjlen()){
+            setKzbz((String) SJGZUtil.transMsg(s.substring(jztz.getKzbz(),jztz.getKzbz()+jztz.getSinlen()),jztz.getKzbzgz()));
+            setMsxz((String) SJGZUtil.transMsg(s.substring(jztz.getMsxz(),jztz.getMsxz()+jztz.getSinlen()),jztz.getMsxzgz()));
+            setGzdm((String) SJGZUtil.transMsg(s.substring(jztz.getGzdm(),jztz.getGzdm()+jztz.getSinlen()),jztz.getGzdmgz()));
+            setHswd((Double) SJGZUtil.transMsg(s.substring(jztz.getHswd(),jztz.getHswd()+jztz.getSinlen()),jztz.getHswdgz()));
+            setCswd((Double) SJGZUtil.transMsg(s.substring(jztz.getCswd(),jztz.getCswd()+jztz.getSinlen()),jztz.getCswdgz()));
+            setSdwd((Double) SJGZUtil.transMsg(s.substring(jztz.getSdwd(),jztz.getSdwd()+jztz.getSinlen()),jztz.getSdwdgz()));
+            setHjwd((Double) SJGZUtil.transMsg(s.substring(jztz.getHswd(),jztz.getHswd()+jztz.getSinlen()),jztz.getHswdgz()));
+            setJqlx((String) SJGZUtil.transMsg(s.substring(jztz.getJqlx(),jztz.getJqlx()+jztz.getSinlen()),jztz.getJqlxgz()));
+        }
+        return this;
     }
 
     public String getJqid() {
@@ -67,33 +85,37 @@ public class NormalSJ {
         else setJqljzt("2");
     }
 
-    public Float getHswd() {
+    public Double getHswd() {
         return hswd;
     }
 
-    public void setHswd(Float hswd) {
+    public void setHswd(Double hswd) {
         this.hswd = hswd;
     }
 
-    public Float getCswd() {
+    public Double getCswd() {
         return cswd;
     }
 
-    public void setCswd(Float cswd) {
+    public void setCswd(Double cswd) {
         this.cswd = cswd;
     }
 
-    public Float getSdwd() {
+    public Double getSdwd() {
         return sdwd;
     }
 
-    public void setSdwd(Float sdwd) {
+    public void setSdwd(Double sdwd) {
         this.sdwd = sdwd;
     }
 
-    public Float getHjwd() { return hjwd; }
+    public Double getHjwd() {
+        return hjwd;
+    }
 
-    public void setHjwd(Float hjwd) { this.hjwd = hjwd; }
+    public void setHjwd(Double hjwd) {
+        this.hjwd = hjwd;
+    }
 
     public String getJqlx() {
         return jqlx;

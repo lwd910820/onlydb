@@ -1,11 +1,13 @@
 package com.onlydb.macServer.handler;
 
 import com.onlydb.data.mac.dao.TestMapper;
+import com.onlydb.data.mac.entity.JZTZ;
 import com.onlydb.data.mac.entity.JZXX;
 import com.onlydb.data.mac.entity.NormalSJ;
 import com.onlydb.global.prop.SocketPool;
 import com.onlydb.macServer.MessageServer;
 import com.onlydb.util.CRC16Util;
+import com.onlydb.util.SJGZUtil;
 import com.onlydb.util.SocketUtil;
 import com.onlydb.util.TransUtil;
 import io.netty.buffer.ByteBuf;
@@ -25,10 +27,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MessageHandler extends AMessageHandler {
 
-    private JZXX jzxx = new JZXX();
+
+    private Map<String,NormalSJ> normalSJs = new ConcurrentHashMap<String,NormalSJ>();
 //    private String command = "";
 //    private boolean validAll = false;
-    private ConcurrentHashMap<String,String> jztz = new ConcurrentHashMap<>();
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
@@ -119,13 +121,16 @@ public class MessageHandler extends AMessageHandler {
         if(jzsj.length()<38) return false;
         jzxx.setJzid(jzsj.substring(0,4));
         jzxx.setId(testMapper.getJzUUID(jzxx.getJzid()));
+        if(jzxx.getId()==null||jzxx.getId()=="") return false;
         Integer num = Integer.parseInt(jzsj.substring(4,6),16);
+        jztz = testMapper.getJztj(jzxx);
+        System.out.println(jztz);
+        if(jztz==null) return false;
         for(int i=0;i<num;i++){
-            jqs.add("0"+(i+1));
+            normalSJs.put("0"+Integer.toHexString(i+1),new NormalSJ(testMapper.getJqUUID(jzxx.getId(),"0"+Integer.toHexString(i+1))));
         }
         testMapper.insertJzxx(jzxx,"0");
         testMapper.updateJzxx(jzxx,new Date(),"0");
-//        testMapper.connectedJq(jzxx,jqs,"0");
         return true;
     }
 
@@ -143,17 +148,21 @@ public class MessageHandler extends AMessageHandler {
 
     private boolean saveJqxx(String re){
         if (re!=null&&re.length()>=18){
-            if(re.substring(0,12).equals("000400000000")){
+            if(re.substring(0,12).equals(jztz.getNormalcom())){
 //                String jqxx = CRC16Util.getBufHexStr(Arrays.copyOfRange(bytes,3,bytes.length-2));
                 String jqxx = re.substring(14,re.length()-4);
                 Integer jqsl = Integer.parseInt(re.substring(12,14));
+                if(jqxx.length()!=jqsl*jztz.getSinsjlen());
                 for(int b=0;b<jqsl;b++){
-                    int start = b*34;
-                    int end = (b+1)*34;
-                    NormalSJ normalSJ = new NormalSJ(jqxx.substring(start,end),
-                            testMapper.getJqUUID(jzxx.getId(),jqxx.substring(start,start+2)));
-                    testMapper.updateJqsj(normalSJ,new Date());
-                    testMapper.inserJqsj(normalSJ,jzxx);
+//                    int start = b*34;
+//                    int end = (b+1)*34;
+                    int start = b*jztz.getSinsjlen();
+                    String jqbh = jqxx.substring(start,start+2);
+                    int end = (b+1)*jztz.getSinsjlen();
+                    normalSJs.get(jqbh).setProp(jqxx.substring(start,end),jztz);
+                    System.out.println(normalSJs.get(jqbh));
+                    testMapper.updateJqsj(normalSJs.get(jqbh),new Date());
+                    testMapper.inserJqsj(normalSJs.get(jqbh),jzxx);
                 }
                 return true;
             }
@@ -163,9 +172,9 @@ public class MessageHandler extends AMessageHandler {
 
     private boolean savePumb(String re){
         if(re!=null&&re.length()>=18){
-            if(re.substring(0,12).equals("FF0300940001")){
-                String sbzt = re.substring(12,re.length()-4);
-                jzxx.setSbzt(sbzt);
+            if(re.substring(0,12).equals(jztz.getPumpcom())){
+                jzxx.setSbzt((String) SJGZUtil.transMsg(re.substring(12,12+jztz.getPumplen()),jztz.getPumpgz()));
+                System.out.println(jzxx);
                 testMapper.updateSBZT(jzxx);
                 testMapper.insertSBZT(jzxx,"0");
                 return true;
@@ -178,16 +187,9 @@ public class MessageHandler extends AMessageHandler {
     //
     private boolean saveElectry(String re){
         if(re!=null&&re.length()>=20){
-            if(re.substring(0,12).equals("FF0400010002")){
-                int k = Integer.valueOf(re.substring(12,20),16);
-                Float dbds = -1f;
-                try {
-                    dbds = Float.intBitsToFloat(k);
-                } catch (NumberFormatException e){
-                    dbds = -1f;
-                }
-                System.out.println(dbds);
-                jzxx.setDbds(dbds);
+            if(re.substring(0,12).equals(jztz.getEleccom())){
+                jzxx.setDbds((Float) SJGZUtil.transMsg(re.substring(12,12+jztz.getEleclen()),jztz.getElecgz()));
+                System.out.println(jzxx);
                 testMapper.updateSBZT(jzxx);
                 return true;
             }
@@ -244,30 +246,31 @@ public class MessageHandler extends AMessageHandler {
     }
 
     private void special(String re){
-        if(re.substring(2,12).equals("0300000077")){
-            NormalSJ normalSJ = new NormalSJ();
-            normalSJ.setJqid(testMapper.getJqUUID(jzxx.getId(),re.substring(0,2)));
-            normalSJ.setMsxz(re.substring(14,16));
-            if(normalSJ.getMsxz().equals("00")){
-                normalSJ.setSdwd((float) Integer.parseInt(re.substring(18,20),16));
-                normalSJ.setCswd((float) Integer.parseInt(re.substring(176,178),16));
-                normalSJ.setHswd((float) Integer.parseInt(re.substring(174,176),16));
-            } else if(normalSJ.getMsxz().equals("01")) {
-                normalSJ.setSdwd((float) Integer.parseInt(re.substring(26,28),16));
-                normalSJ.setCswd((float) Integer.parseInt(re.substring(234,236),16));
-                normalSJ.setHswd((float) Integer.parseInt(re.substring(190,192),16));
-            } else {
-                normalSJ.setSdwd((float) Integer.parseInt(re.substring(22,24),16));
-                normalSJ.setCswd((float) Integer.parseInt(re.substring(234,236),16));
-                normalSJ.setHswd((float) Integer.parseInt(re.substring(190,192),16));
-            }
-            normalSJ.setKzbz(re.substring(12,14));
-            normalSJ.setGzdm(re.substring(154,156));
-            normalSJ.setJqlx(re.substring(222,224));
-            testMapper.insertAllJqsj(re.substring(12,re.length()-4),jzxx,normalSJ);
-            testMapper.updateJqsj(normalSJ,new Date());
-            testMapper.inserJqsj(normalSJ,jzxx);
-        }
+//        if(re.substring(2,12).equals("0300000077")){
+//            NormalSJ normalSJ = new NormalSJ();
+//            normalSJ.setJqid(testMapper.getJqUUID(jzxx.getId(),re.substring(0,2)));
+//            normalSJ.setMsxz(re.substring(14,16));
+//            if(normalSJ.getMsxz().equals("00")){
+//                normalSJ.setSdwd((float) Integer.parseInt(re.substring(18,20),16));
+//                normalSJ.setCswd((float) Integer.parseInt(re.substring(176,178),16));
+//                normalSJ.setHswd((float) Integer.parseInt(re.substring(174,176),16));
+//            } else if(normalSJ.getMsxz().equals("01")) {
+//                normalSJ.setSdwd((float) Integer.parseInt(re.substring(26,28),16));
+//                normalSJ.setCswd((float) Integer.parseInt(re.substring(234,236),16));
+//                normalSJ.setHswd((float) Integer.parseInt(re.substring(190,192),16));
+//            } else {
+//                normalSJ.setSdwd((float) Integer.parseInt(re.substring(22,24),16));
+//                normalSJ.setCswd((float) Integer.parseInt(re.substring(234,236),16));
+//                normalSJ.setHswd((float) Integer.parseInt(re.substring(190,192),16));
+//            }
+//            normalSJ.setKzbz(re.substring(12,14));
+//            normalSJ.setGzdm(re.substring(154,156));
+//            normalSJ.setJqlx(re.substring(222,224));
+//            testMapper.insertAllJqsj(re.substring(12,re.length()-4),jzxx,normalSJ);
+//            testMapper.updateJqsj(normalSJ,new Date());
+//            testMapper.inserJqsj(normalSJ,jzxx);
+//        }
+
     }
 
     //更新机器操作记录

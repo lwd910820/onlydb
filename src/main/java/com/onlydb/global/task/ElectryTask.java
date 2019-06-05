@@ -21,8 +21,12 @@ public class ElectryTask implements Runnable {
                     continue;
                 }
                 if(TransUtil.state.get(mh.getAddress()).equals(0)){
-                    TransUtil.state.put(mh.getAddress(),5);
-                    mh.sendMes("FF0400010002");
+                    synchronized (TransUtil.state) {
+                        if(TransUtil.state.get(mh.getAddress()).equals(0)){
+                            TransUtil.state.put(mh.getAddress(),5);
+                            mh.sendMes(mh.getJztz().getEleccom());
+                        }
+                    }
                 }
             }
             Thread.sleep(10000);

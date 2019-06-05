@@ -1,15 +1,29 @@
 package com.onlydb;
 
+import com.onlydb.config.utils.LocalUtils;
+import com.onlydb.data.mac.dao.TestMapper;
 import com.onlydb.util.CRC16Util;
 import com.sun.org.apache.xerces.internal.impl.dv.xs.HexBinaryDV;
+import org.apache.ibatis.io.ResolverUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-public class test {
+@SpringBootApplication
+public class test implements CommandLineRunner {
+
+    @Autowired
+    private TestMapper mapper;
 
     public static void main(String[] args) {
-        System.out.println(Float.intBitsToFloat(Integer.valueOf("4015C28F",16)));
-//        System.out.println(Integer.toHexString(Float.floatToIntBits(0.51f)));
-        String strHex = Integer.toHexString(279);
-        System.out.println(strHex);
+        SpringApplication app = new SpringApplication(OnlydbApplication.class);
+        LocalUtils.context = app.run(args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        System.out.println(mapper);
     }
 
 }

@@ -1,9 +1,6 @@
 package com.onlydb.data.mac.dao;
 
-import com.onlydb.data.mac.entity.JZXX;
-import com.onlydb.data.mac.entity.NormalSJ;
-import com.onlydb.data.mac.entity.PassValid;
-import com.onlydb.data.mac.entity.SYS_USER_ROLE;
+import com.onlydb.data.mac.entity.*;
 import org.apache.ibatis.annotations.*;
 
 import java.util.Date;
@@ -55,27 +52,29 @@ public interface TestMapper {
             "kzbz=#{jqsj.kzbz,jdbcType=VARCHAR}," +
             "model=#{jqsj.msxz,jdbcType=VARCHAR}," +
             "gzdm=#{jqsj.gzdm,jdbcType=VARCHAR}," +
-            "hswd=#{jqsj.hswd,jdbcType=TINYINT}," +
-            "cswd=#{jqsj.cswd,jdbcType=TINYINT}," +
-            "sdwd=#{jqsj.sdwd,jdbcType=TINYINT}," +
-            "jqlx=#{jqsj.jqlx,jdbcType=TINYINT}," +
+            "hswd=#{jqsj.hswd,jdbcType=NUMERIC}," +
+            "cswd=#{jqsj.cswd,jdbcType=NUMERIC}," +
+            "sdwd=#{jqsj.sdwd,jdbcType=NUMERIC}," +
+            "jqlx=#{jqsj.jqlx,jdbcType=NUMERIC}," +
+            "hjwd=#{jqsj.hjwd,jdbcType=NUMERIC}," +
             "jqljzt=#{jqsj.jqljzt,jdbcType=CHAR}," +
             "update_date=#{date,jdbcType=TIMESTAMP} " +
             "where jquuid=#{jqsj.jqid,jdbcType=VARCHAR}")
     Integer updateJqsj(@Param("jqsj")NormalSJ jqsj,@Param("date")Date date);
 
     //水泵状态字段暂时删除，用环境温度替代
-    @Insert("insert into T_GRGL_JQSJ_HIS(jquuid,jzuuid,kzbz,model,gzdm,hswd,cswd,sdwd,jqlx) " +
+    @Insert("insert into T_GRGL_JQSJ_HIS(jquuid,jzuuid,kzbz,model,gzdm,hswd,cswd,sdwd,hjwd,jqlx) " +
             "values (" +
             "#{jqsj.jqid,jdbcType=VARCHAR}," +
             "#{jzxx.id,jdbcType=VARCHAR}," +
             "#{jqsj.kzbz,jdbcType=VARCHAR}," +
             "#{jqsj.msxz,jdbcType=VARCHAR}," +
             "#{jqsj.gzdm,jdbcType=VARCHAR}," +
-            "#{jqsj.hswd,jdbcType=TINYINT}," +
-            "#{jqsj.cswd,jdbcType=TINYINT}," +
-            "#{jqsj.sdwd,jdbcType=TINYINT}," +
-            "#{jqsj.jqlx,jdbcType=TINYINT})" )
+            "#{jqsj.hswd,jdbcType=NUMERIC}," +
+            "#{jqsj.cswd,jdbcType=NUMERIC}," +
+            "#{jqsj.sdwd,jdbcType=NUMERIC}," +
+            "#{jqsj.3,jdbcType=NUMERIC}," +
+            "#{jqsj.jqlx,jdbcType=NUMERIC})" )
     Integer inserJqsj(@Param("jqsj")NormalSJ jqsj,@Param("jzxx")JZXX jzxx);
 
     @Insert("insert into T_GRGL_ALLJQSJ(qbcs,jzuuid,jquuid) " +
@@ -154,5 +153,11 @@ public interface TestMapper {
             "t.jquuid=#{jquuid,jdbcType=VARCHAR}")
     Integer updateJQCZ(@Param("jqzl")String jqzl,@Param("jquuid")String jquuid,@Param("date")Date date);
 
+    @Select("select zlxh.* from t_zd_jzxx jz,(" +
+            "select zl.* from t_zd_dtuxh xh,t_zd_dtuzl zl where zl.dtuxh=xh.id" +
+            ") zlxh " +
+            "where zlxh.dtuxh=jz.dtuxh " +
+            "and jz.id=#{jzxx.id,jdbcType=VARCHAR}")
+    JZTZ getJztj(@Param("jzxx")JZXX jzxx);
 //    @Select("")
 }
