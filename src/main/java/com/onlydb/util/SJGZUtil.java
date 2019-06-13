@@ -25,6 +25,9 @@ public class SJGZUtil {
             case "5":
                 data = msgToInteger(msg);
                 break;
+            case "6":
+                data = msgToBanirys(msg);
+                break;
         }
 
         return data;
@@ -79,9 +82,21 @@ public class SJGZUtil {
         return Integer.valueOf(msg,16);
     }
 
-    private static String douToHex(Double num){
-        Integer ms = num.intValue();
-        return Integer.toHexString(ms);
+//    private static String douToHex(Double num){
+//        Integer ms = num.intValue();
+//        return Integer.toHexString(ms);
+//    }
+
+    private static int[] msgToBanirys(String msg){
+        int[] chars = new int[16];
+        int key = Integer.valueOf(msg,16);
+        int i=0;
+        while (key>0){
+            chars[i] = key&1;
+            key>>=1;
+            i++;
+        }
+        return chars;
     }
 
 }

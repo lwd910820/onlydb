@@ -2,6 +2,7 @@ package com.onlydb.data.mac.dao;
 
 import com.onlydb.data.mac.entity.*;
 import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.type.JdbcType;
 
 import java.util.Date;
 import java.util.List;
@@ -73,8 +74,8 @@ public interface TestMapper {
             "#{jqsj.hswd,jdbcType=NUMERIC}," +
             "#{jqsj.cswd,jdbcType=NUMERIC}," +
             "#{jqsj.sdwd,jdbcType=NUMERIC}," +
-            "#{jqsj.3,jdbcType=NUMERIC}," +
-            "#{jqsj.jqlx,jdbcType=NUMERIC})" )
+            "#{jqsj.hjwd,jdbcType=NUMERIC}," +
+            "#{jqsj.jqlx,jdbcType=VARCHAR})" )
     Integer inserJqsj(@Param("jqsj")NormalSJ jqsj,@Param("jzxx")JZXX jzxx);
 
     @Insert("insert into T_GRGL_ALLJQSJ(qbcs,jzuuid,jquuid) " +
@@ -154,10 +155,32 @@ public interface TestMapper {
     Integer updateJQCZ(@Param("jqzl")String jqzl,@Param("jquuid")String jquuid,@Param("date")Date date);
 
     @Select("select zlxh.* from t_zd_jzxx jz,(" +
-            "select zl.* from t_zd_dtuxh xh,t_zd_dtuzl zl where zl.dtuxh=xh.id" +
+            "select zl.* from t_zd_dtuxh xh,t_zd_dtuzl zl where zl.dtuxh=xh.id and zl.del_flag='0' and xh.del_flag='0'" +
             ") zlxh " +
-            "where zlxh.dtuxh=jz.dtuxh " +
+            "where zlxh.dtuxh=jz.dtuxh and jz.del_flag='0' " +
             "and jz.id=#{jzxx.id,jdbcType=VARCHAR}")
     JZTZ getJztj(@Param("jzxx")JZXX jzxx);
-//    @Select("")
+
+    @Select("select * from t_zd_xhmsval where xhmsgzid=#{xhmsgzid,jdbcType=VARCHAR} ")
+    List<XHMSVAL> getXhmsval(@Param("xhmsgzid")String xhmsgzid);
+
+    @Select("select * from t_zd_xhmsgz where xhmsid=#{xhmsid,jdbcType=VARCHAR}")
+//    @Results({
+//            @Result(column = "id",property = "id",jdbcType= JdbcType.VARCHAR, id=true ),
+//            @Result(column = "id",property = "xhmsvals",javaType = List.class,
+//                    many = @Many(select = "com.onlydb.data.mac.dao.TestMapper.getXhmsval"))
+//    })
+    List<XHMSGZ> getXhmsgz(@Param("xhmsid")String xhmsid);
+
+    @Select("select * from t_zd_xhms where id=#{id,jdbcType=VARCHAR}")
+//    @Results({
+//            @Result(column = "id",property = "id",jdbcType = JdbcType.VARCHAR, id = true),
+//            @Result(column = "id",property = "xhmsgzs",javaType = List.class,
+//                    many = @Many(select = "com.onlydb.data.mac.dao.TestMapper.getXhmsgz"))
+//    })
+    XHMS getXhms(@Param("id")String id);
+
+    @Select("select * from t_zd_xhms where unionid=#{xhid,jdbcType=VARCHAR}")
+    List<XHMS> getXhmsByXh(@Param("xhid")String xhid);
+
 }

@@ -32,9 +32,8 @@ public class SingleService extends HttpService {
         } else {
             String jzbh = (String) param.get("jzid");
             String jqbh = (String) param.get("jqid");
-            String jqzl = (String) param.get("jqzl");
-            String jqcs = (String) param.get("param");
             String zdyzl = (String) param.get("zdyzl");
+            String jqcs = (String) param.get("param");
             if(jzbh==null||jqbh==null) {
                 send(ctx,"请求参数错误",HttpResponseStatus.OK);
                 return;
@@ -55,50 +54,32 @@ public class SingleService extends HttpService {
                     return;
                 }
                 ByteBuf buf = Unpooled.buffer();
-                operation(ip,jqbh,jqzl,zdyzl,jqcs,buf,channel.getCtx());
+                operation(ip,jqbh,zdyzl,jqcs,buf,channel.getCtx());
                 return;
             }
         }
     }
 
-    private String getZlj(String jqbh ,String jqzl, String jqcs, String zdyzl){
-        if(jqzl==null||jqzl.equals("")) {
-            if(zdyzl!=null&&!zdyzl.equals("")){
-                return jqbh+zdyzl.toUpperCase();
-            } else {
-                return jqbh+"0300000077";
-            }
-        }
-        if(jqzl.equals("close")){
-            return  jqbh+"0600000030";
-        } else if(jqzl.equals("open")) {
-            return  jqbh+"0600000031";
-        } else if(jqzl.equals("HotTemp")) {
-            String hexstr = CRC16Util.strToHexStr(jqcs);
-            if(hexstr!=null) return jqbh+"06000700"+hexstr;
-            return null;
-        } else if(jqzl.equals("ColdTemp")) {
-            String hexstr = CRC16Util.strToHexStr(jqcs);
-            if(hexstr!=null) return jqbh+"06000500"+hexstr;
-            return null;
+    private String getZlj(String jqbh, String jqcs, String jqzl){
+        if(jqzl!=null&&!jqzl.equals("")){
+            return jqbh+jqzl.toUpperCase();
         } else {
             return null;
         }
     }
 
-    private void operation(String ip,String jqbh,String jqzl,String zdyzl,String jqcs,ByteBuf buf,ChannelHandlerContext channel){
-        String zl = getZlj(jqbh,jqzl,jqcs,zdyzl);
+    private void operation(String ip,String jqbh,String zdyzl,String jqcs,ByteBuf buf,ChannelHandlerContext channel){
+        String zl = getZlj(jqbh,jqcs,zdyzl);
         if(zl==null) {
             if(buf.refCnt()>0) ReferenceCountUtil.release(buf);
             return;
         }
         TransUtil.state.put(ip,1);
-        System.out.println(zl);
         TransUtil.zls.put(ip,zl);
         buf.writeBytes(CRC16Util.getSendBuf(zl));
         channel.writeAndFlush(buf).addListener(future -> {
             if(future.isSuccess()){
-                System.out.println(buf.refCnt());
+
             }
         });
         int i = 0;

@@ -1,15 +1,15 @@
 package com.onlydb.macServer.handler;
 
 import com.onlydb.data.mac.dao.TestMapper;
-import com.onlydb.data.mac.entity.JQLX;
 import com.onlydb.data.mac.entity.JZTZ;
 import com.onlydb.data.mac.entity.JZXX;
+import com.onlydb.data.mac.entity.NormalSJ;
+import com.onlydb.data.mac.entity.XHMS;
 import com.onlydb.util.CRC16Util;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +30,11 @@ public abstract class AMessageHandler extends ChannelInboundHandlerAdapter {
     protected String address;
     protected ChannelHandlerContext ctx;
 //    protected List<String> jqs = new ArrayList<>();
-    protected Map<String,JQLX> jqlxs = new ConcurrentHashMap<>();
+//    protected Map<String,JQLX> jqlxs = new ConcurrentHashMap<>();
     protected JZTZ jztz;
     protected JZXX jzxx = new JZXX();
+    protected Map<String,NormalSJ> normalSJs = new ConcurrentHashMap<String,NormalSJ>();
+    protected Map<String,Map<String,XHMS>> xhmss = new ConcurrentHashMap<>();
 
     protected byte[] msgToByte(Object msg) {
         ByteBuf b = (ByteBuf) msg;
@@ -65,7 +67,6 @@ public abstract class AMessageHandler extends ChannelInboundHandlerAdapter {
     public ChannelHandlerContext getCtx() {
         return ctx;
     }
-
 
     public String getAddress() { return address; }
 

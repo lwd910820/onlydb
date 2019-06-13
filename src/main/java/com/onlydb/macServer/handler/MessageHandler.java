@@ -28,7 +28,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MessageHandler extends AMessageHandler {
 
 
-    private Map<String,NormalSJ> normalSJs = new ConcurrentHashMap<String,NormalSJ>();
 //    private String command = "";
 //    private boolean validAll = false;
 
@@ -124,10 +123,10 @@ public class MessageHandler extends AMessageHandler {
         if(jzxx.getId()==null||jzxx.getId()=="") return false;
         Integer num = Integer.parseInt(jzsj.substring(4,6),16);
         jztz = testMapper.getJztj(jzxx);
-        System.out.println(jztz);
         if(jztz==null) return false;
         for(int i=0;i<num;i++){
             normalSJs.put("0"+Integer.toHexString(i+1),new NormalSJ(testMapper.getJqUUID(jzxx.getId(),"0"+Integer.toHexString(i+1))));
+//            xhmss.put("0"+Integer.toHexString(i+1),testMapper.getXhmsByXh(jzsj.substring()));
         }
         testMapper.insertJzxx(jzxx,"0");
         testMapper.updateJzxx(jzxx,new Date(),"0");
@@ -246,6 +245,9 @@ public class MessageHandler extends AMessageHandler {
     }
 
     private void special(String re){
+        if(!saveJqxx(re)){
+
+        }
 //        if(re.substring(2,12).equals("0300000077")){
 //            NormalSJ normalSJ = new NormalSJ();
 //            normalSJ.setJqid(testMapper.getJqUUID(jzxx.getId(),re.substring(0,2)));
