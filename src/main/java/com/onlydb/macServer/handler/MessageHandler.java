@@ -187,7 +187,7 @@ public class MessageHandler extends AMessageHandler {
     private boolean saveElectry(String re){
         if(re!=null&&re.length()>=20){
             if(re.substring(0,12).equals(jztz.getEleccom())){
-                jzxx.setDbds((Float) SJGZUtil.transMsg(re.substring(12,12+jztz.getEleclen()),jztz.getElecgz()));
+                jzxx.setDbds(SJGZUtil.transMsg(re.substring(12,12+jztz.getEleclen()),jztz.getElecgz()));
                 System.out.println(jzxx);
                 testMapper.updateSBZT(jzxx);
                 return true;

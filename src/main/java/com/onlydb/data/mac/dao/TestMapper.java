@@ -53,11 +53,11 @@ public interface TestMapper {
             "kzbz=#{jqsj.kzbz,jdbcType=VARCHAR}," +
             "model=#{jqsj.msxz,jdbcType=VARCHAR}," +
             "gzdm=#{jqsj.gzdm,jdbcType=VARCHAR}," +
-            "hswd=#{jqsj.hswd,jdbcType=NUMERIC}," +
-            "cswd=#{jqsj.cswd,jdbcType=NUMERIC}," +
-            "sdwd=#{jqsj.sdwd,jdbcType=NUMERIC}," +
-            "jqlx=#{jqsj.jqlx,jdbcType=NUMERIC}," +
-            "hjwd=#{jqsj.hjwd,jdbcType=NUMERIC}," +
+            "hswd=#{jqsj.hswd,jdbcType=VARCHAR}," +
+            "cswd=#{jqsj.cswd,jdbcType=VARCHAR}," +
+            "sdwd=#{jqsj.sdwd,jdbcType=VARCHAR}," +
+            "jqlx=#{jqsj.jqlx,jdbcType=VARCHAR}," +
+            "hjwd=#{jqsj.hjwd,jdbcType=VARCHAR}," +
             "jqljzt=#{jqsj.jqljzt,jdbcType=CHAR}," +
             "update_date=#{date,jdbcType=TIMESTAMP} " +
             "where jquuid=#{jqsj.jqid,jdbcType=VARCHAR}")
@@ -71,10 +71,10 @@ public interface TestMapper {
             "#{jqsj.kzbz,jdbcType=VARCHAR}," +
             "#{jqsj.msxz,jdbcType=VARCHAR}," +
             "#{jqsj.gzdm,jdbcType=VARCHAR}," +
-            "#{jqsj.hswd,jdbcType=NUMERIC}," +
-            "#{jqsj.cswd,jdbcType=NUMERIC}," +
-            "#{jqsj.sdwd,jdbcType=NUMERIC}," +
-            "#{jqsj.hjwd,jdbcType=NUMERIC}," +
+            "#{jqsj.hswd,jdbcType=VARCHAR}," +
+            "#{jqsj.cswd,jdbcType=VARCHAR}," +
+            "#{jqsj.sdwd,jdbcType=VARCHAR}," +
+            "#{jqsj.hjwd,jdbcType=VARCHAR}," +
             "#{jqsj.jqlx,jdbcType=VARCHAR})" )
     Integer inserJqsj(@Param("jqsj")NormalSJ jqsj,@Param("jzxx")JZXX jzxx);
 
@@ -126,7 +126,7 @@ public interface TestMapper {
 
     @Update("update T_HC_JZXX set " +
             "sbzt=#{jzxx.sbzt,jdbcType=VARCHAR}," +
-            "dbds=#{jzxx.dbds,jdbcType=FLOAT} " +
+            "dbds=#{jzxx.dbds,jdbcType=VARCHAR} " +
             "where " +
             "jzid = #{jzxx.id,jdbcType=VARCHAR}")
     Integer updateSBZT(@Param("jzxx")JZXX jzxx);
@@ -136,7 +136,7 @@ public interface TestMapper {
             "(#{jzxx.id}," +
             "#{jzxx.jzip,jdbcType=VARCHAR}," +
             "#{jzxx.jzport,jdbcType=VARCHAR}," +
-            "#{jzxx.dbds,jdbcType=FLOAT}," +
+            "#{jzxx.dbds,jdbcType=VARCHAR}," +
             "#{jzxx.sbzt,jdbcType=VARCHAR}," +
             "#{jzzt})")
     Integer insertSBZT(@Param("jzxx")JZXX jzxx,@Param("jzzt")String jzzt);

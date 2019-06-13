@@ -2,9 +2,9 @@ package com.onlydb.util;
 
 public class SJGZUtil {
 
-    public static Object transMsg(String msg,String find){
+    public static String transMsg(String msg,String find){
 
-        Object data = null;
+        String data = null;
 
         switch (find){
             case "0":
@@ -37,7 +37,7 @@ public class SJGZUtil {
         return msg;
     }
 
-    private static Float msg16ToIEEE754(String msg){
+    private static String msg16ToIEEE754(String msg){
         Float f = -1f;
         try {
             Integer k = Integer.valueOf(msg,16);
@@ -45,41 +45,42 @@ public class SJGZUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return f;
+        return f.toString();
     }
 
-    private static Double msg16ToDouble(String msg){
+    private static String msg16ToDouble(String msg){
         Double d = null;
         try {
             d = Integer.valueOf(msg,16)/1.0;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return d;
+        return d.toString();
     }
 
-    private static Double msg16ToDouble10(String msg){
+    private static String msg16ToDouble10(String msg){
         Double d = null;
         try {
             d = Integer.valueOf(msg,16)/10.0;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return d;
+        return d.toString();
     }
 
-    private static Double msg16ToDouble100(String msg){
+    private static String msg16ToDouble100(String msg){
         Double d = null;
         try {
             d = Integer.valueOf(msg,16)/100.0;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return d;
+        return d.toString();
     }
 
-    private static Integer msgToInteger(String msg){
-        return Integer.valueOf(msg,16);
+    private static String msgToInteger(String msg){
+
+        return Integer.valueOf(msg,16).toString();
     }
 
 //    private static String douToHex(Double num){
@@ -87,16 +88,16 @@ public class SJGZUtil {
 //        return Integer.toHexString(ms);
 //    }
 
-    private static int[] msgToBanirys(String msg){
-        int[] chars = new int[16];
+    private static String msgToBanirys(String msg){
+        StringBuffer sb = new StringBuffer();
+        int i=msg.length()*4;
         int key = Integer.valueOf(msg,16);
-        int i=0;
-        while (key>0){
-            chars[i] = key&1;
+        while (i>0){
+            sb.insert(0,key&1) ;
             key>>=1;
-            i++;
+            i--;
         }
-        return chars;
+        return sb.toString();
     }
 
 }

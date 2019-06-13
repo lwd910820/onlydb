@@ -9,7 +9,7 @@ public class JZXX {
     private String jzip;
     private String jzport;
     private String sbzt="";
-    private double dbds=0;
+    private String dbds="";
 
     public String getId() {
         return id;
@@ -51,11 +51,11 @@ public class JZXX {
         this.sbzt = sbzt;
     }
 
-    public double getDbds() {
+    public String getDbds() {
         return dbds;
     }
 
-    public void setDbds(double dbds) {
+    public void setDbds(String dbds) {
         this.dbds = dbds;
     }
 

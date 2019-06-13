@@ -9,10 +9,10 @@ public class NormalSJ {
     private String kzbz;
     private String msxz;
     private String gzdm;
-    private Double hswd;
-    private Double cswd;
-    private Double sdwd;
-    private Double hjwd;
+    private String hswd;
+    private String cswd;
+    private String sdwd;
+    private String hjwd;
     private String jqlx;
     private String jqljzt = "0";
 
@@ -21,14 +21,14 @@ public class NormalSJ {
     public NormalSJ(String s,String jqid,JZTZ jztz){
         this.jqid = jqid;
         if(s.length()==jztz.getSinlen()*8){
-            setKzbz((String) SJGZUtil.transMsg(s.substring(jztz.getKzbz(),jztz.getKzbz()+jztz.getSinlen()),jztz.getKzbzgz()));
-            setMsxz((String) SJGZUtil.transMsg(s.substring(jztz.getMsxz(),jztz.getMsxz()+jztz.getSinlen()),jztz.getMsxzgz()));
-            setGzdm((String) SJGZUtil.transMsg(s.substring(jztz.getGzdm(),jztz.getGzdm()+jztz.getSinlen()),jztz.getGzdmgz()));
-            setHswd((Double) SJGZUtil.transMsg(s.substring(jztz.getHswd(),jztz.getHswd()+jztz.getSinlen()),jztz.getHswdgz()));
-            setCswd((Double) SJGZUtil.transMsg(s.substring(jztz.getCswd(),jztz.getCswd()+jztz.getSinlen()),jztz.getCswdgz()));
-            setSdwd((Double) SJGZUtil.transMsg(s.substring(jztz.getSdwd(),jztz.getSdwd()+jztz.getSinlen()),jztz.getSdwdgz()));
-            setHjwd((Double) SJGZUtil.transMsg(s.substring(jztz.getHswd(),jztz.getHswd()+jztz.getSinlen()),jztz.getHswdgz()));
-            setJqlx((String) SJGZUtil.transMsg(s.substring(jztz.getJqlx(),jztz.getJqlx()+jztz.getSinlen()),jztz.getJqlxgz()));
+            setKzbz(SJGZUtil.transMsg(s.substring(jztz.getKzbz(),jztz.getKzbz()+jztz.getSinlen()),jztz.getKzbzgz()));
+            setMsxz(SJGZUtil.transMsg(s.substring(jztz.getMsxz(),jztz.getMsxz()+jztz.getSinlen()),jztz.getMsxzgz()));
+            setGzdm(SJGZUtil.transMsg(s.substring(jztz.getGzdm(),jztz.getGzdm()+jztz.getSinlen()),jztz.getGzdmgz()));
+            setHswd(SJGZUtil.transMsg(s.substring(jztz.getHswd(),jztz.getHswd()+jztz.getSinlen()),jztz.getHswdgz()));
+            setCswd(SJGZUtil.transMsg(s.substring(jztz.getCswd(),jztz.getCswd()+jztz.getSinlen()),jztz.getCswdgz()));
+            setSdwd(SJGZUtil.transMsg(s.substring(jztz.getSdwd(),jztz.getSdwd()+jztz.getSinlen()),jztz.getSdwdgz()));
+            setHjwd(SJGZUtil.transMsg(s.substring(jztz.getHswd(),jztz.getHswd()+jztz.getSinlen()),jztz.getHswdgz()));
+            setJqlx(SJGZUtil.transMsg(s.substring(jztz.getJqlx(),jztz.getJqlx()+jztz.getSinlen()),jztz.getJqlxgz()));
         }
     }
 
@@ -38,14 +38,14 @@ public class NormalSJ {
 
     public NormalSJ setProp(String s,JZTZ jztz){
         if(s.length()==jztz.getSinsjlen()){
-            setKzbz((String) SJGZUtil.transMsg(s.substring(jztz.getKzbz(),jztz.getKzbz()+jztz.getSinlen()),jztz.getKzbzgz()));
-            setMsxz((String) SJGZUtil.transMsg(s.substring(jztz.getMsxz(),jztz.getMsxz()+jztz.getSinlen()),jztz.getMsxzgz()));
-            setGzdm((String) SJGZUtil.transMsg(s.substring(jztz.getGzdm(),jztz.getGzdm()+jztz.getSinlen()),jztz.getGzdmgz()));
-            setHswd((Double) SJGZUtil.transMsg(s.substring(jztz.getHswd(),jztz.getHswd()+jztz.getSinlen()),jztz.getHswdgz()));
-            setCswd((Double) SJGZUtil.transMsg(s.substring(jztz.getCswd(),jztz.getCswd()+jztz.getSinlen()),jztz.getCswdgz()));
-            setSdwd((Double) SJGZUtil.transMsg(s.substring(jztz.getSdwd(),jztz.getSdwd()+jztz.getSinlen()),jztz.getSdwdgz()));
-            setHjwd((Double) SJGZUtil.transMsg(s.substring(jztz.getHswd(),jztz.getHswd()+jztz.getSinlen()),jztz.getHswdgz()));
-            setJqlx((String) SJGZUtil.transMsg(s.substring(jztz.getJqlx(),jztz.getJqlx()+jztz.getSinlen()),jztz.getJqlxgz()));
+            setKzbz(SJGZUtil.transMsg(s.substring(jztz.getKzbz(),jztz.getKzbz()+jztz.getSinlen()),jztz.getKzbzgz()));
+            setMsxz(SJGZUtil.transMsg(s.substring(jztz.getMsxz(),jztz.getMsxz()+jztz.getSinlen()),jztz.getMsxzgz()));
+            setGzdm(SJGZUtil.transMsg(s.substring(jztz.getGzdm(),jztz.getGzdm()+jztz.getSinlen()),jztz.getGzdmgz()));
+            setHswd(SJGZUtil.transMsg(s.substring(jztz.getHswd(),jztz.getHswd()+jztz.getSinlen()),jztz.getHswdgz()));
+            setCswd(SJGZUtil.transMsg(s.substring(jztz.getCswd(),jztz.getCswd()+jztz.getSinlen()),jztz.getCswdgz()));
+            setSdwd(SJGZUtil.transMsg(s.substring(jztz.getSdwd(),jztz.getSdwd()+jztz.getSinlen()),jztz.getSdwdgz()));
+            setHjwd(SJGZUtil.transMsg(s.substring(jztz.getHswd(),jztz.getHswd()+jztz.getSinlen()),jztz.getHswdgz()));
+            setJqlx(SJGZUtil.transMsg(s.substring(jztz.getJqlx(),jztz.getJqlx()+jztz.getSinlen()),jztz.getJqlxgz()));
         }
         return this;
     }
@@ -85,35 +85,35 @@ public class NormalSJ {
         else setJqljzt("2");
     }
 
-    public Double getHswd() {
+    public String getHswd() {
         return hswd;
     }
 
-    public void setHswd(Double hswd) {
+    public void setHswd(String hswd) {
         this.hswd = hswd;
     }
 
-    public Double getCswd() {
+    public String getCswd() {
         return cswd;
     }
 
-    public void setCswd(Double cswd) {
+    public void setCswd(String cswd) {
         this.cswd = cswd;
     }
 
-    public Double getSdwd() {
+    public String getSdwd() {
         return sdwd;
     }
 
-    public void setSdwd(Double sdwd) {
+    public void setSdwd(String sdwd) {
         this.sdwd = sdwd;
     }
 
-    public Double getHjwd() {
+    public String getHjwd() {
         return hjwd;
     }
 
-    public void setHjwd(Double hjwd) {
+    public void setHjwd(String hjwd) {
         this.hjwd = hjwd;
     }
 
