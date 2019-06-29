@@ -11,6 +11,8 @@ public class SocketPool {
 
     private static final Map<String,MessageHandler> validpool = new ConcurrentHashMap<>();
     private static final Map<String,MessageHandler> invalidpool = new ConcurrentHashMap<>();
+    private static final Map<String,MessageHandler> validconnpool = new ConcurrentHashMap<>();
+
 
     /*socketpool基础操作*/
     public static boolean addInvalid(String socketname, MessageHandler channel){
@@ -18,12 +20,16 @@ public class SocketPool {
         return false;
     }
 
-    public static boolean addValid(String socketname, MessageHandler channel){
+    public static boolean addValid(String socketname, String jzid, MessageHandler channel){
         if(invalidpool.containsKey(socketname)) {
-            validpool.put(socketname,invalidpool.remove(socketname));
+            if(validconnpool.containsKey(jzid)) validconnpool.remove(jzid).getCtx().close();
+            MessageHandler mh = invalidpool.remove(socketname);
+            validpool.put(socketname,mh);
+            validconnpool.put(jzid,mh);
             return true;
         } else {
             validpool.put(socketname,channel);
+            validconnpool.put(jzid,channel);
         }
         return false;
     }

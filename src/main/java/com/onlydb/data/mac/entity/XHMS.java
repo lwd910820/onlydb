@@ -5,17 +5,18 @@ import java.util.List;
 public class XHMS {
 
     private String id;
+    private String unionid;
     private String cznr;
     private String czzl;
     private String csyw;
     private Integer cscd;
-    private String csjz;
+    private String csgz;
     private String jlzt;
     private String gzbzw;
     private String dxbz;
     private Integer sjwz;
     private Integer sjcd;
-    private List<XHMSGZ> xhmsgzs;
+    private String sjsm;
 
     public String getId() {
         return id;
@@ -23,6 +24,14 @@ public class XHMS {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getUnionid() {
+        return unionid;
+    }
+
+    public void setUnionid(String unionid) {
+        this.unionid = unionid;
     }
 
     public String getCznr() {
@@ -57,12 +66,12 @@ public class XHMS {
         this.cscd = cscd;
     }
 
-    public String getCsjz() {
-        return csjz;
+    public String getCsgz() {
+        return csgz;
     }
 
-    public void setCsjz(String csjz) {
-        this.csjz = csjz;
+    public void setCsgz(String csgz) {
+        this.csgz = csgz;
     }
 
     public String getJlzt() {
@@ -105,28 +114,30 @@ public class XHMS {
         this.sjcd = sjcd;
     }
 
-    public List<XHMSGZ> getXhmsgzs() {
-        return xhmsgzs;
+    public String getSjsm() {
+        return sjsm;
     }
 
-    public void setXhmsgzs(List<XHMSGZ> xhmsgzs) {
-        this.xhmsgzs = xhmsgzs;
+    public void setSjsm(String sjsm) {
+        this.sjsm = sjsm;
     }
 
     @Override
     public String toString() {
         return "XHMS{" +
-                "cznr='" + cznr + '\'' +
+                "id='" + id + '\'' +
+                ", unionid='" + unionid + '\'' +
+                ", cznr='" + cznr + '\'' +
                 ", czzl='" + czzl + '\'' +
                 ", csyw='" + csyw + '\'' +
                 ", cscd=" + cscd +
-                ", csjz='" + csjz + '\'' +
+                ", csgz='" + csgz + '\'' +
                 ", jlzt='" + jlzt + '\'' +
                 ", gzbzw='" + gzbzw + '\'' +
                 ", dxbz='" + dxbz + '\'' +
                 ", sjwz=" + sjwz +
                 ", sjcd=" + sjcd +
-                ", xhmsgzs=" + xhmsgzs +
+                ", sjsm='" + sjsm + '\'' +
                 '}';
     }
 }

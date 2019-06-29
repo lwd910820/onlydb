@@ -17,6 +17,8 @@ import org.springframework.context.annotation.Scope;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @SpringBootConfiguration
 public class InitConfig {
@@ -80,6 +82,12 @@ public class InitConfig {
         HttpHandler httpHandler = new HttpHandler();
         httpHandler.addService(singleService(),multipleService());
         return httpHandler;
+    }
+
+    @Bean
+    @Scope("singleton")
+    public ExecutorService bussExecutor(){
+        return Executors.newFixedThreadPool(5);
     }
 
 }

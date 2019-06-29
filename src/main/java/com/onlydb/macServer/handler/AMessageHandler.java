@@ -28,13 +28,14 @@ public abstract class AMessageHandler extends ChannelInboundHandlerAdapter {
     protected String ip;
     protected String port;
     protected String address;
+    protected Integer cur = 0;
     protected ChannelHandlerContext ctx;
 //    protected List<String> jqs = new ArrayList<>();
 //    protected Map<String,JQLX> jqlxs = new ConcurrentHashMap<>();
     protected JZTZ jztz;
     protected JZXX jzxx = new JZXX();
     protected Map<String,NormalSJ> normalSJs = new ConcurrentHashMap<String,NormalSJ>();
-    protected Map<String,Map<String,XHMS>> xhmss = new ConcurrentHashMap<>();
+    protected Map<String,HashMap<String,XHMS>> xhmss = new ConcurrentHashMap<>();
 
     protected byte[] msgToByte(Object msg) {
         ByteBuf b = (ByteBuf) msg;

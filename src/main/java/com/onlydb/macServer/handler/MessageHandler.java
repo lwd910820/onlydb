@@ -4,6 +4,7 @@ import com.onlydb.data.mac.dao.TestMapper;
 import com.onlydb.data.mac.entity.JZTZ;
 import com.onlydb.data.mac.entity.JZXX;
 import com.onlydb.data.mac.entity.NormalSJ;
+import com.onlydb.data.mac.entity.XHMS;
 import com.onlydb.global.prop.SocketPool;
 import com.onlydb.macServer.MessageServer;
 import com.onlydb.util.CRC16Util;
@@ -20,16 +21,22 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.ReferenceCountUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class MessageHandler extends AMessageHandler {
 
 
 //    private String command = "";
 //    private boolean validAll = false;
+    @Autowired
+    private ExecutorService bussExecutor;
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
@@ -37,8 +44,14 @@ public class MessageHandler extends AMessageHandler {
         if (evt instanceof IdleStateEvent){
             IdleStateEvent event = (IdleStateEvent) evt;
             if(event.state() == IdleState.READER_IDLE) {
-                logger.error("15分钟内未收到信息，强制关闭连接");
-                ctx.close();
+                if(valid==false){
+                    logger.error("连接未验证，强制断开");
+                    ctx.close();
+                } else if(cur>90){
+                    logger.error("15分钟内未收到信息，强制关闭连接");
+                    ctx.close();
+                }
+                cur++;
             }
         }else {
             super.userEventTriggered(ctx,evt);
@@ -60,37 +73,46 @@ public class MessageHandler extends AMessageHandler {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        byte[] bytes = msgToByte(msg);
-        logger.info("JZ:"+jzxx.getJzid()+":"+CRC16Util.getBufHexStr(bytes));
-        try {
-            if(!valid){
-                if(passValid(bytes)){
-                    valid = true;
-                    saveJzxx(bytes);
-                    if(jzxx.getId()!=null) logger.info("jqxx数据库插入成功");
-                    else {
-                        logger.error("jqxx数据库插入失败");
+        bussExecutor.submit(()->{
+            byte[] bytes = msgToByte(msg);
+            cur = 0;
+            logger.info("JZ:"+jzxx.getJzid()+":"+CRC16Util.getBufHexStr(bytes));
+            try {
+                if(!valid){
+                    if(passValid(bytes)){
+                        valid = true;
+                        saveJzxx(bytes);
+                        if(jzxx.getId()!=null) logger.info("jqxx数据库插入成功");
+                        else {
+                            logger.error("jqxx数据库插入失败");
+                            ctx.close();
+                        }
+                        TransUtil.state.put(address,0);
+                        TransUtil.mes.put(address,"");
+                        this.ctx = ctx;
+                        SocketPool.addValid(address,jzxx.getId(),this);
+                        logger.warn(address+"已在非法库中删除");
+                        logger.warn(address+"已加入合法连接库");
+                    }else{
                         ctx.close();
                     }
-                    TransUtil.state.put(address,0);
-                    TransUtil.mes.put(address,"");
-                    this.ctx = ctx;
-                    SocketPool.addValid(address,this);
-                    logger.warn(address+"已在非法库中删除");
-                    logger.warn(address+"已加入合法连接库");
-                }else{
-                    ctx.close();
-                }
 
-            } else {
-                if(CRC16Util.checkBuf(bytes)){
-                    saveAll(bytes);
+                } else {
+                    if(CRC16Util.checkBuf(bytes)){
+                        saveAll(bytes);
+                    }
                 }
+            } finally {
+                ctx.flush();
+                ReferenceCountUtil.release(msg);
             }
-        } finally {
-            ReferenceCountUtil.release(msg);
-        }
+        });
 
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        ctx.flush();
     }
 
     @Override
@@ -126,6 +148,7 @@ public class MessageHandler extends AMessageHandler {
         if(jztz==null) return false;
         for(int i=0;i<num;i++){
             normalSJs.put("0"+Integer.toHexString(i+1),new NormalSJ(testMapper.getJqUUID(jzxx.getId(),"0"+Integer.toHexString(i+1))));
+            loadJqgz("0"+Integer.toHexString(i+1),jzsj.substring(6+i*2,8+i*2));
 //            xhmss.put("0"+Integer.toHexString(i+1),testMapper.getXhmsByXh(jzsj.substring()));
         }
         testMapper.insertJzxx(jzxx,"0");
@@ -159,7 +182,6 @@ public class MessageHandler extends AMessageHandler {
                     String jqbh = jqxx.substring(start,start+2);
                     int end = (b+1)*jztz.getSinsjlen();
                     normalSJs.get(jqbh).setProp(jqxx.substring(start,end),jztz);
-                    System.out.println(normalSJs.get(jqbh));
                     testMapper.updateJqsj(normalSJs.get(jqbh),new Date());
                     testMapper.inserJqsj(normalSJs.get(jqbh),jzxx);
                 }
@@ -169,11 +191,11 @@ public class MessageHandler extends AMessageHandler {
         return false;
     }
 
+    //获取水泵数据
     private boolean savePumb(String re){
         if(re!=null&&re.length()>=18){
             if(re.substring(0,12).equals(jztz.getPumpcom())){
                 jzxx.setSbzt((String) SJGZUtil.transMsg(re.substring(12,12+jztz.getPumplen()),jztz.getPumpgz()));
-                System.out.println(jzxx);
                 testMapper.updateSBZT(jzxx);
                 testMapper.insertSBZT(jzxx,"0");
                 return true;
@@ -182,13 +204,11 @@ public class MessageHandler extends AMessageHandler {
         return false;
     }
 
-    //海信电表命令修改为FF0400010002
-    //
+    //获取电表数据
     private boolean saveElectry(String re){
         if(re!=null&&re.length()>=20){
             if(re.substring(0,12).equals(jztz.getEleccom())){
                 jzxx.setDbds(SJGZUtil.transMsg(re.substring(12,12+jztz.getEleclen()),jztz.getElecgz()));
-                System.out.println(jzxx);
                 testMapper.updateSBZT(jzxx);
                 return true;
             }
@@ -241,6 +261,13 @@ public class MessageHandler extends AMessageHandler {
             } finally {
                 TransUtil.state.put(address,0);
             }
+        } else {
+            try {
+                if(saveJqxx(re)||saveElectry(re)||savePumb(re))
+                logger.info(address+"机器主动数据接收成功");
+            } finally {
+
+            }
         }
     }
 
@@ -276,17 +303,27 @@ public class MessageHandler extends AMessageHandler {
     }
 
     //更新机器操作记录
-    public boolean updateCom(String re){
+    private boolean updateCom(String re){
         String jqbh = null;
-        if(re.length()>=16) jqbh = re.substring(0,2);
-        if(jqbh!=null||!jqbh.equals("")) {
-            if(re.substring(2,4).equals("06")){
-                testMapper.updateJQCZ(re.substring(2,12),
+        if(re.length()>=10) jqbh = re.substring(0,2);
+        if(jqbh!=null&&!jqbh.equals("")&&re!=null&&!re.trim().equals("")) {
+            if(xhmss.get(jqbh)!=null&&xhmss.get(jqbh).get(re.substring(2,12))!=null&&
+                    xhmss.get(jqbh).get(re.substring(2,12)).getJlzt().equals("0")){
+                testMapper.updateJQCZ(re.substring(0,re.length()-4),
                         testMapper.getJqUUID(jzxx.getId(),jqbh),new Date());
                 return true;
             }
         }
         return false;
+    }
+
+    private void loadJqgz(String jqbh,String xh){
+        List<XHMS> li = testMapper.getXhmsByXh(xh);
+        HashMap map = new HashMap();
+        for(XHMS xhms:li) {
+            map.put(xhms.getCzzl(),xhms);
+        }
+        xhmss.put(jqbh,map);
     }
 
 }

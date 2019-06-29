@@ -36,7 +36,7 @@ public class MessageServer {
                  @Override
                  protected void initChannel(SocketChannel socketChannel) throws Exception {
                      socketChannel.pipeline().addLast("count", (ChannelInboundHandlerAdapter) LocalUtils.context.getBean("countHandler"));
-                     socketChannel.pipeline().addLast("idle",new IdleStateHandler(900, 600, 0, TimeUnit.SECONDS));
+                     socketChannel.pipeline().addLast("idle",new IdleStateHandler(10, 600, 0, TimeUnit.SECONDS));
                      socketChannel.pipeline().addLast("mac", (ChannelInboundHandlerAdapter) LocalUtils.context.getBean("messageHandler"));
                  }
              })

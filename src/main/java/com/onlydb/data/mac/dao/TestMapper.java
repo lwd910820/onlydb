@@ -180,7 +180,7 @@ public interface TestMapper {
 //    })
     XHMS getXhms(@Param("id")String id);
 
-    @Select("select * from t_zd_xhms where unionid=#{xhid,jdbcType=VARCHAR}")
+    @Select("select * from t_zd_xhms where unionid=#{xhid,jdbcType=VARCHAR} and del_flag='0'")
     List<XHMS> getXhmsByXh(@Param("xhid")String xhid);
 
 }

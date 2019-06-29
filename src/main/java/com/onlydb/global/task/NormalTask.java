@@ -21,15 +21,11 @@ public class NormalTask implements Runnable {
                     continue;
                 }
                 if(TransUtil.state.get(mh.getAddress()).equals(0)){
-                    synchronized (TransUtil.state) {
-                        if(TransUtil.state.get(mh.getAddress()).equals(0)){
-                            TransUtil.state.put(mh.getAddress(),3);
-                            mh.sendMes(mh.getJztz().getNormalcom());
-                        }
-                    }
+                    TransUtil.state.put(mh.getAddress(),3);
+                    mh.sendMes(mh.getJztz().getNormalcom());
                 }
             }
-            Thread.sleep(10000);
+            Thread.sleep(20000);
         } catch (Throwable e) {
             e.printStackTrace();
         } finally {
