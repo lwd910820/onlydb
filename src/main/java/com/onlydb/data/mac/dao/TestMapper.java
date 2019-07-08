@@ -183,4 +183,11 @@ public interface TestMapper {
     @Select("select * from t_zd_xhms where unionid=#{xhid,jdbcType=VARCHAR} and del_flag='0'")
     List<XHMS> getXhmsByXh(@Param("xhid")String xhid);
 
+    @Select("select value from v_zd_xhmscx " +
+            "where jxbh=#{jxbh,jdbcType=VARCHAR} " +
+            "and cznr='故障代码' " +
+            "and valbz='无故障' " +
+            "and value is not null")
+    String getNoGz(@Param("jxbh")String jxbh);
+
 }

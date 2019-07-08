@@ -102,7 +102,10 @@ public class MessageHandler extends AMessageHandler {
                         saveAll(bytes);
                     }
                 }
-            } finally {
+            } catch (Exception e){
+                e.printStackTrace();
+
+            }finally {
                 ctx.flush();
                 ReferenceCountUtil.release(msg);
             }
@@ -147,7 +150,8 @@ public class MessageHandler extends AMessageHandler {
         jztz = testMapper.getJztj(jzxx);
         if(jztz==null) return false;
         for(int i=0;i<num;i++){
-            normalSJs.put("0"+Integer.toHexString(i+1),new NormalSJ(testMapper.getJqUUID(jzxx.getId(),"0"+Integer.toHexString(i+1))));
+            normalSJs.put("0"+Integer.toHexString(i+1),new NormalSJ(testMapper.getJqUUID(jzxx.getId(),"0"+Integer.toHexString(i+1)),testMapper.getNoGz(jzsj.substring(6+i*2,8+i*2))));
+            if(jzxx.getJzid().equals("0084")) System.out.println(normalSJs);
             loadJqgz("0"+Integer.toHexString(i+1),jzsj.substring(6+i*2,8+i*2));
 //            xhmss.put("0"+Integer.toHexString(i+1),testMapper.getXhmsByXh(jzsj.substring()));
         }

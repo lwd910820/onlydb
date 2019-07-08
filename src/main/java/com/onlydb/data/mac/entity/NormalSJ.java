@@ -14,6 +14,7 @@ public class NormalSJ {
     private String sdwd;
     private String hjwd;
     private String jqlx;
+    private String nogz;
     private String jqljzt = "0";
 
     public NormalSJ(){}
@@ -32,8 +33,9 @@ public class NormalSJ {
         }
     }
 
-    public NormalSJ(String jqid){
+    public NormalSJ(String jqid,String nogz){
         this.jqid = jqid;
+        this.nogz = nogz;
     }
 
     public NormalSJ setProp(String s,JZTZ jztz){
@@ -80,8 +82,7 @@ public class NormalSJ {
 
     public void setGzdm(String gzdm) {
         this.gzdm = gzdm;
-        if(gzdm.equals("FF")) setJqljzt("0");
-        else if(gzdm.equals("FE")) setJqljzt("1");
+        if(gzdm.equals(nogz)) setJqljzt("0");
         else setJqljzt("2");
     }
 
@@ -129,6 +130,14 @@ public class NormalSJ {
 
     public void setJqljzt(String jqljzt) { this.jqljzt = jqljzt; }
 
+    public String getNogz() {
+        return nogz;
+    }
+
+    public void setNogz(String nogz) {
+        this.nogz = nogz;
+    }
+
     @Override
     public String toString() {
         return "NormalSJ{" +
@@ -136,11 +145,12 @@ public class NormalSJ {
                 ", kzbz='" + kzbz + '\'' +
                 ", msxz='" + msxz + '\'' +
                 ", gzdm='" + gzdm + '\'' +
-                ", hswd=" + hswd +
-                ", cswd=" + cswd +
-                ", sdwd=" + sdwd +
+                ", hswd='" + hswd + '\'' +
+                ", cswd='" + cswd + '\'' +
+                ", sdwd='" + sdwd + '\'' +
                 ", hjwd='" + hjwd + '\'' +
                 ", jqlx='" + jqlx + '\'' +
+                ", nogz='" + nogz + '\'' +
                 ", jqljzt='" + jqljzt + '\'' +
                 '}';
     }
